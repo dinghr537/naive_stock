@@ -24,5 +24,7 @@ python trader.py --training training.csv --testing testing.csv --output output.c
 
 關於回歸模型的選擇，有嘗試 ridge regression, lasso regression, support vector regression與random forest，最後選擇了表現相對更好的random forest。
 
+現在已將 line 133 ~ line 138 註解掉，這部分是訓練以及保存模型的code，助教若要訓練模型，可以將這部分的註解打開。line 140 ~ line 141 是讀取之前有存好的模型，若不需要可以將其註解掉。
+
 最後，用一個Trader進行預測結果的對比以及選擇合適的action。
 

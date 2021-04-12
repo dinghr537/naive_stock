@@ -36,6 +36,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn import linear_model
+import pickle
 
 
 # In[2]:
@@ -110,29 +111,34 @@ poly_lookahead_X = poly.fit_transform(lookahead_X)
 
 # use ridge regression
 # predict_tomorrow = linear_model.Ridge(alpha=1)
-# predict_3days = linear_model.Ridge(alpha=1)
+# predict_4days = linear_model.Ridge(alpha=1)
 
 # I've also tried Lasso regression but it didn't work well
 # predict_tomorrow = linear_model.Lasso(alpha=1, tol=0.01)
-# predict_3days = linear_model.Lasso(alpha=1, tol=0.01)
+# predict_4days = linear_model.Lasso(alpha=1, tol=0.01)
 
 # sklearn support vector regression
 # from sklearn import svm
 # predict_tomorrow = svm.SVR()
-# predict_3days = svm.SVR()
+# predict_4days = svm.SVR()
 
-# finally I choose to use ransom forest with 20 decision trees each
+# finally I choose to use ransom forest with 64 decision trees each
 from sklearn import ensemble
-predict_tomorrow = ensemble.RandomForestRegressor(n_estimators=20)
-predict_3days = ensemble.RandomForestRegressor(n_estimators=20)
+predict_tomorrow = ensemble.RandomForestRegressor(n_estimators=64)
+predict_4days = ensemble.RandomForestRegressor(n_estimators=64)
 
 
 # In[8]:
 
 # fit model
-predict_tomorrow.fit(poly_one_day_X ,one_day_Y)
-predict_3days.fit(poly_lookahead_X ,lookahead_Y)
+# predict_tomorrow.fit(poly_one_day_X ,one_day_Y)
+# predict_4days.fit(poly_lookahead_X ,lookahead_Y)
 
+# pickle.dump(predict_tomorrow, open("model_tomorrow.sav", 'wb'))
+# pickle.dump(predict_4days, open("model_4days.sav", 'wb'))
+
+predict_tomorrow = pickle.load(open("model_tomorrow.sav", 'rb'))
+predict_4days = pickle.load(open("model_4days.sav", 'rb'))
 
 # In[9]:
 
@@ -148,7 +154,7 @@ def get_testing_data(path):
 # In[10]:
 
 # call get_testing_data
-# just read data to memory, won't see the content of data until line 203
+# just read data to memory, won't see the content of data until line 209
 testing_data = get_testing_data(data_test)
 
 
@@ -156,18 +162,18 @@ testing_data = get_testing_data(data_test)
 
 # use class Trader to predict prices and make decisions
 class Trader():
-    def __init__(self, predict_tomorrow, predict_3days):
+    def __init__(self, predict_tomorrow, predict_4days):
         self.predict_tomorrow = predict_tomorrow
-        self.predict_3days = predict_3days
+        self.predict_4days = predict_4days
         self.day_count = 0    
         self.slot = 0
 
     def predict_action(self,current_data):
         current_price = current_data[0]
         next_price = self.predict_tomorrow.predict(current_data.reshape(1,-1))
-        mean_3days_price = self.predict_3days.predict(current_data.reshape(1,-1))
+        mean_4days_price = self.predict_4days.predict(current_data.reshape(1,-1))
         self.day_count += 1
-        action = self.policy(current_price, next_price, mean_3days_price)
+        action = self.policy(current_price, next_price, mean_4days_price)
         return action
 
     def policy(self, current_price, next_price, price_of_days):
@@ -195,7 +201,7 @@ class Trader():
 # In[12]:
 
 
-trader = Trader(predict_tomorrow, predict_3days)
+trader = Trader(predict_tomorrow, predict_4days)
 
 
 # In[13]:
