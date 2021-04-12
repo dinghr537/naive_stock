@@ -22,7 +22,7 @@ python trader.py --training training.csv --testing testing.csv --output output.c
 
 關於資料的處理，就是在讀入資料後，用sclearn.preprocessing裡的PolynomialFeatures，將open, high, low, close以及過去五天內的最高、最低、平均價格展開成36組feature，期待能得到更好的回歸效果。
 
-關於回歸模型的選擇，有嘗試 ridge regression, lasso regression, support vectoe regression與random forest，最後選擇了表現相對更好的random forest。
+關於回歸模型的選擇，有嘗試 ridge regression, lasso regression, support vector regression與random forest，最後選擇了表現相對更好的random forest。
 
 最後，用一個Trader進行預測結果的對比以及選擇合適的action。
 

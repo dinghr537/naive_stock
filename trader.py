@@ -148,6 +148,7 @@ def get_testing_data(path):
 # In[10]:
 
 # call get_testing_data
+# just read data to memory, won't see the content of data until line 203
 testing_data = get_testing_data(data_test)
 
 
@@ -202,8 +203,8 @@ trader = Trader(predict_tomorrow, predict_3days)
 # generate output file
 with open(data_out, 'w') as output_file:
     for line in testing_data[0:-1]:
-        # We will perform your action as the open price in the next day.
-
+        # read one line of testing data and output the action
+        # then read the next line
         data = poly.fit_transform(line.reshape(1, -1))
         action = trader.predict_action(data.ravel())
 
